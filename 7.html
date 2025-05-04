@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ebfl.ai - Yapay Zeka Eğitim Asistanı</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fafafa;
+      display: flex;
+      height: 100vh;
+      color: #333;
+    }
+    .sidebar {
+      width: 260px;
+      background: #fff;
+      border-right: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 15px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+      overflow-y: auto;
+    }
+    .sidebar h1 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #007bff;
+      text-align: center;
+      transition: color 0.3s ease;
+    }
+    .menu-button {
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 12px 10px;
+      border-radius: 10px;
+      font-size: 15px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .menu-button:hover {
+      background: #f0f4ff;
+    }
+    .chat-history {
+      margin-top: 30px;
+    }
+    .chat-history h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .chat-item {
+      background: #f8f8f8;
+      border-radius: 10px;
+      padding: 12px 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .chat-item:hover {
+      background: #e6e6e6;
+    }
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header-bar {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-bar .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .auth-buttons button {
+      margin-left: 10px;
+      background: #007bff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+    .chat-body {
+      flex: 1;
+      padding: 20px;
+      background: #fafafa;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .message {
+      max-width: 70%;
+      padding: 15px 20px;
+      border-radius: 20px;
+      font-size: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      animation: fadeIn 0.3s ease-in-out;
+      position: relative;
+    }
+    .message.user {
+      align-self: flex-end;
+      background-color: #007bff;
+      color: white;
+    }
+    .message.assistant {
+      align-self: flex-start;
+      background-color: #e9ecef;
+      color: #333;
+    }
+    .reply-button {
+      position: absolute;
+      bottom: -20px;
+      right: 10px;
+      font-size: 12px;
+      background: #fff;
+      color: #007bff;
+      border: 1px solid #007bff;
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .reply-button:hover {
+      background: #007bff;
+      color: #fff;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-input {
+      display: flex;
+      background: #fff;
+      padding: 15px 20px;
+      border-top: 1px solid #eee;
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 12px 15px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input input:focus {
+      border-color: #007bff;
+    }
+    .chat-input button {
+      margin-left: 10px;
+      background: #007bff;
+      border: none;
+      padding: 12px 18px;
+      color: white;
+      font-size: 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .chat-input button:hover {
+      background: #005fcc;
+    }
+    .tab-content {
+      display: none;
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+    }
+    .exam-timer-selector {
+      margin-bottom: 20px;
+    }
+    .exam-timer-selector select {
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .countdown {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 40px;
+      background: #e8f0fe;
+      padding: 20px;
+      border-radius: 12px;
+      color: #007bff;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .settings-group {
+      margin-top: 20px;
+    }
+    .settings-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .exam-tabs {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      gap: 15px;
+    }
+    .exam-tabs button {
+      padding: 10px 20px;
+      background: #007bff;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .exam-tabs button:hover {
+      background: #005fcc;
+    }
+  </style>
+</head>
+<body>
+    <div class="sidebar">
+      <h1>ebfl.ai</h1>
+      <button class="menu-button" onclick="showTab('chatbot')">Yapay Zeka Chatbot</button>
+      <button class="menu-button" onclick="showTab('planner')">AI Destekli Ders Programı</button>
+      <button class="menu-button" onclick="showTab('timer')">Sınav Sayacı</button>
+      <button class="menu-button" onclick="showTab('score')">Sınav Puan Hesaplama</button>
+      <button class="menu-button" onclick="showTab('settings')">Ayarlar</button>
+      <div class="chat-history">
+        <h3>Bugün</h3>
+        <div class="chat-item">Yapay Zeka Eğitim Platformu</div>
+      </div>
+    </div>
+    <div class="chat-main">
+      <div class="header-bar">
+        <div class="title">Yapay Zeka Asistanı</div>
+        <div class="auth-buttons">
+          <button>Giriş Yap</button>
+          <button>Kayıt Ol</button>
+        </div>
+      </div>
+      
+      <div id="chatbot" class="tab-content active">
+        <div class="chat-body"></div>
+        <div class="chat-input">
+          <input type="text" placeholder="Bir şeyler yaz..." onkeydown="if(event.key === 'Enter') sendMessage()">
+          <button onclick="sendMessage()">Gönder</button>
+        </div>
+      </div>
+      
+      <div id="timer" class="tab-content">
+        <div class="exam-tabs">
+          <button onclick="selectExam('LGS')">LGS</button>
+          <button onclick="selectExam('TYT')">TYT</button>
+          <button onclick="selectExam('AYT')">AYT</button>
+        </div>
+        <div id="countdown" class="countdown"></div>
+      </div>
+      
+      <div id="planner" class="tab-content">
+        <h1>Ders programı oluşturma aracı yakında eklenecek...</h1>
+      </div>
+      
+      <div id="score" class="tab-content">
+        <h1>Sınav puan hesaplama aracı yakında eklenecek...</h1>
+      </div>
+      
+      <div id="settings" class="tab-content"> 
+        <div class="settings-group">
+           <h3>Logo Ayarları</h3> 
+           
+          <label for="colorPicker">Logo Rengini Değiştir:</label>
+          <input type="color" id="colorPicker" onchange="updateColor(this)">
+        </div>
+        <div class="settings-group">
+          <label><input type="checkbox" onchange="toggleRGB(this)"> RGB Animasyonu Aç</label>
+        </div>
+        <div class="settings-group">
+          <br>
+          <h3>AI Ayarları</h3>
+          
+          <label><input type="checkbox" id="customizeAI" onchange="toggleAIPersonalization()"> AI Kişiselleştir</label>
+        </div>
+        <div id="aiPersonalizationFields" style="display: none;">
+          <div class="settings-group">
+            <label for="gradeSelect">Sınıf Seç:</label>
+            <select id="gradeSelect">
+              <option value="9">9. Sınıf</option>
+              <option value="10">10. Sınıf</option>
+              <option value="11">11. Sınıf</option>
+              <option value="12">12. Sınıf</option>
+            </select>
+          </div>
+          <div class="settings-group">
+            <label for="subjectSelect">Ders Seç:</label>
+            <select id="subjectSelect">
+              <option value="Türk Dili ve Edebiyatı">Türk Dili ve Edebiyatı</option>
+              <option value="Matematik">Matematik</option>
+              <option value="Fizik">Fizik</option>
+              <option value="Kimya">Kimya</option>
+              <option value="Biyoloji">Biyoloji</option>
+              <option value="Tarih">Tarih</option>
+              <option value="Coğrafya">Coğrafya</option>
+              <option value="Din Kültürü ve Ahlak Bilgisi">Din Kültürü ve Ahlak Bilgisi</option>
+              <option value="Yabancı Dil">Yabancı Dil</option>
+              <option value="Rehberlik ve psikoloji">Rehberlik ve Psikoloji</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <script>
+      // Sayfa yüklendiğinde timer için varsayılan değeri göster
+      document.addEventListener('DOMContentLoaded', function() {
+        selectExam('LGS');
+      });
+      
+      function showTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(tab).classList.add('active');
+      }
+    
+      async function sendMessage() {
+        const input = document.querySelector('.chat-input input');
+        const chatBody = document.querySelector('.chat-body');
+        const userText = input.value.trim();
+        if (!userText) return;
+    
+        if (chatBody.children.length === 0) {
+          document.querySelector('.title').innerText = userText;
+        }
+    
+        const userDiv = document.createElement('div');
+        userDiv.className = 'message user';
+        userDiv.innerText = userText;
+        chatBody.appendChild(userDiv);
+        input.value = "";
+    
+        const isCustomized = document.getElementById('customizeAI')?.checked;
+        const selectedClass = isCustomized ? document.getElementById('gradeSelect')?.value : null;
+        const selectedSubject = isCustomized ? document.getElementById('subjectSelect')?.value : null;
+    
+        try {
+          const res = await fetch('http://localhost:3000/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              message: userText,
+              aiSettings: isCustomized ? { sinif: selectedClass, ders: selectedSubject } : null 
+            })
+          });
+      
+          if (!res.ok) {
+            throw new Error('Sunucu bağlantısı başarısız');
+          }
+      
+          const data = await res.json();
+          const assistantDiv = document.createElement('div');
+          assistantDiv.className = 'message assistant';
+          assistantDiv.innerText = data.reply;
+      
+          const replyBtn = document.createElement('button');
+          replyBtn.className = 'reply-button';
+          replyBtn.innerText = 'Yanıtla';
+          replyBtn.onclick = () => {
+            input.value = `"${data.reply}" adlı cevabınıza karşılık olarak : `;
+            input.focus();
+          };
+      
+          assistantDiv.appendChild(replyBtn);
+          chatBody.appendChild(assistantDiv);
+        } catch (error) {
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'message assistant';
+          errorDiv.innerText = 'Şu anda sunucuya bağlanılamıyor. Lütfen daha sonra tekrar deneyin.';
+          chatBody.appendChild(errorDiv);
+          console.error('Bağlantı hatası:', error);
+        }
+        
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    
+      function selectExam(type) {
+        // Sınav tarihleri
+        let examDates = {
+          LGS: new Date("June 2, 2025 09:00:00"),
+          TYT: new Date("June 15, 2025 10:00:00"),
+          AYT: new Date("June 16, 2025 10:00:00")
+        };
+
+        const now = new Date();
+        const distance = examDates[type] - now;
+
+        if (distance < 0) {
+          document.getElementById("countdown").innerHTML = `${type} sınavı çoktan geçti.`;
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML = `
+          ${type} sınavına kalan süre:<br>
+          ${days} gün ${hours} saat ${minutes} dakika ${seconds} saniye
+        `;
+        
+        // Sayacı güncellemek için interval başlat
+        if (window.countdownInterval) {
+          clearInterval(window.countdownInterval);
+        }
+        
+        window.countdownInterval = setInterval(() => {
+          const now = new Date();
+          const distance = examDates[type] - now;
+          
+          if (distance < 0) {
+            clearInterval(window.countdownInterval);
+            document.getElementById("countdown").innerHTML = `${type} sınavı çoktan geçti.`;
+            return;
+          }
+          
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          
+          document.getElementById("countdown").innerHTML = `
+            ${type} sınavına kalan süre:<br>
+            ${days} gün ${hours} saat ${minutes} dakika ${seconds} saniye
+          `;
+        }, 1000);
+      }
+    
+      function toggleRGB(toggle) {
+        const title = document.querySelector('.sidebar h1');
+        if (toggle.checked) {
+          let hue = 0;
+          title._rgbInterval = setInterval(() => {
+            title.style.color = `hsl(${hue}, 100%, 50%)`;
+            hue = (hue + 1) % 360;
+          }, 50);
+        } else {
+          clearInterval(title._rgbInterval);
+          title.style.color = '#007bff';
+        }
+      }
+    
+      function toggleAIPersonalization() {
+        const isChecked = document.getElementById('customizeAI').checked;
+        document.getElementById('aiPersonalizationFields').style.display = isChecked ? 'block' : 'none';
+      }
+    
+      function updateColor(picker) {
+        document.querySelector('.sidebar h1').style.color = picker.value;
+      }
+    </script>
+    
+</body>
+</html>

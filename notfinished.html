@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ebfl.ai - Yapay Zeka Eğitim Asistanı</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --light-bg: #f9fafb;
+      --light-text: #1f2937;
+      --light-border: #e5e7eb;
+      --light-hover: #f0f4ff;
+      --dark-bg: #1f2937;
+      --dark-secondary: #374151;
+      --dark-text: #f3f4f6;
+      --dark-border: #4b5563;
+      --dark-hover: #2d3748;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] {
+      --primary: #818cf8;
+      --primary-dark: #6366f1;
+    }
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      transition: var(--transition-normal);
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Poppins', sans-serif;
+      background: var(--light-bg);
+      display: flex;
+      height: 100vh;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    .sidebar {
+      width: 280px;
+      background: #fff;
+      border-right: 1px solid var(--light-border);
+      display: flex;
+      flex-direction: column;
+      padding: 25px 15px;
+      box-shadow: var(--shadow-sm);
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    body[data-theme="dark"] .sidebar {
+      background: var(--dark-secondary);
+      border-right: 1px solid var(--dark-border);
+    }
+
+    .sidebar h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 35px;
+      color: var(--primary);
+      text-align: center;
+      transition: color 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .sidebar h1 i {
+      font-size: 20px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 12px;
+      background: var(--light-hover);
+      border-radius: 12px;
+    }
+
+    body[data-theme="dark"] .user-profile {
+      background: var(--dark-hover);
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 12px;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-info .name {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .user-info .role {
+      font-size: 12px;
+      color: #666;
+    }
+
+    body[data-theme="dark"] .user-info .role {
+      color: #aaa;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .menu-button {
+      color: var(--dark-text);
+    }
+
+    .menu-button:hover {
+      background: var(--light-hover);
+    }
+
+    body[data-theme="dark"] .menu-button:hover {
+      background: var(--dark-hover);
+    }
+
+    .menu-button.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .menu-button.active:hover {
+      background: var(--primary-dark);
+    }
+
+    .menu-button i {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .chat-history {
+      margin-top: 30px;
+    }
+
+    .chat-history h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 12px;
+      padding: 0 12px;
+    }
+
+    body[data-theme="dark"] .chat-history h3 {
+      color: #aaa;
+    }
+
+    .chat-item {
+      background: #f8f8f8;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    body[data-theme="dark"] .chat-item {
+      background: var(--dark-hover);
+    }
+
+    .chat-item:hover {
+      background: #e6e6e6;
+      transform: translateY(-2px);
+    }
+
+    body[data-theme="dark"] .chat-item:hover {
+      background: #2d3748;
+    }
+
+    .chat-item i {
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    .theme-toggle {
+      margin-top: auto;
+      display: flex;
+      justify-content: center;
+      padding: 15px 0;
+    }
+
+    .theme-toggle button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #666;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    body[data-theme="dark"] .theme-toggle button {
+      color: #aaa;
+    }
+
+    .theme-toggle button:hover {
+      background: var(--light-hover);
+      color: var(--primary);
+    }
+
+    body[data-theme="dark"] .theme-toggle button:hover {
+      background: var(--dark-hover);
+      color: var(--primary);
+    }
+
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-bar {
+      padding: 15px 25px;
+      border-bottom: 1px solid var(--light-border);
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    body[data-theme="dark"] .header-bar {
+      background: var(--dark-secondary);
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .header-bar .title {
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-bar .title i {
+      color: var(--primary);
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .auth-buttons button {
+      background: transparent;
+      border: 1px solid var(--primary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .auth-buttons button:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .auth-buttons button:last-child {
+      background: var(--primary);
+      color: white;
+    }
+
+    .auth-buttons button:last-child:hover {
+      background: var(--primary-dark);
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 25px;
+      background: var(--light-bg);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    body[data-theme="dark"] .chat-body {
+      background: var(--dark-bg);
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      font-size: 15px;
+      box-shadow: var(--shadow-sm);
+      animation: fadeInUp 0.4s ease-out;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background-color: var(--primary);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background-color: white;
+      color: var(--light-text);
+      border-bottom-left-radius: 4px;
+    }
+
+    body[data-theme="dark"] .message.assistant {
+      background-color: var(--dark-secondary);
+      color: var(--dark-text);
+    }
+
+    .message-actions {
+      position: absolute;
+      right: 10px;
+      bottom: -28px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .message-action {
+      font-size: 12px;
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    body[data-theme="dark"] .message-action {
+      background: var(--dark-secondary);
+    }
+
+    .message-action:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .message-action i {
+      font-size: 10px;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    .suggestion-chip {
+      background: white;
+      border: 1px solid var(--light-border);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .suggestion-chip {
+      background: var(--dark-secondary);
+      border: 1px solid var(--dark-border);
+      color: var(--dark-text);
+    }
+
+    .suggestion-chip:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .chat-input {
+      display: flex;
+      background: #fff;
+      padding: 15px 25px;
+      border-top: 1px solid var(--light-border);
+      position: relative;
+    }
+
+    body[data-theme="dark"] .chat-input {
+      background: var(--dark-secondary);
+      border-top: 1px solid var(--dark-border);
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      flex: 1;
+      position: relative;
+      align-items: center;
+      border: 1px solid var(--light-border);
+      border-radius: 24px;
+      background: var(--light-bg);
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    body[data-theme="dark"] .chat-input-wrapper {
+      border: 1px solid var(--dark-border);
+      background: var(--dark-bg);
+    }
+
+    .chat-input-wrapper:focus-within {
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+      border-color: var(--primary);
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 14px 20px;
+      font-size: 15px;
+      border: none;
+      border-radius: 24px;
+      outline: none;
+      background: transparent;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .chat-input input {
+      color: var(--dark-text);
+    }
+
+    .chat-input button {
+      background: var(--primary);
+      border: none;
+      padding: 10px;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-right: 6px;
+    }
+
+    .chat-input button:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    .tab-content {
+      display: none;
+      padding: 25px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Timer Tab */
+    .exam-tabs {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0 30px;
+      gap: 15px;
+    }
+
+    .exam-tabs button {
+      padding: 12px 25px;
+      background: white;
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    body[data-theme="dark"] .exam-tabs button {
+      background: var(--dark-secondary);
+    }
+
+    .exam-tabs button:hover {
+      background: var(--light-hover);
+      transform: translateY(-2px);
+    }
+
+    body[data-theme="dark"] .exam-tabs button:hover {
+      background: var(--dark-hover);
+    }
+
+    .exam-tabs button.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .countdown {
+      font-size: 32px;
+      font-weight: bold;
+      margin-top: 20px;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      color: var(--primary);
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    body[data-theme="dark"] .countdown {
+      background: var(--dark-secondary);
+    }
+
+    .countdown::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .countdown-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .countdown-title {
+      color: var(--dark-text);
+    }
+
+    .time-unit {
+      display: inline-block;
+      background: var(--light-bg);
+      padding: 12px 15px;
+      border-radius: 12px;
+      margin: 0 5px;
+      min-width: 90px;
+    }
+
+    body[data-theme="dark"] .time-unit {
+      background: var(--dark-bg);
+    }
+
+    .time-value {
+      font-size: 40px;
+      color: var(--primary);
+    }
+
+    .time-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #666;
+      font-weight: 500;
+    }
+
+    body[data-theme="dark"] .time-label {
+      color: #aaa;
+    }
+
+    /* Settings */
+    .settings-container {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: var(--shadow-md);
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    body[data-theme="dark"] .settings-container {
+      background: var(--dark-secondary);
+    }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: A20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--light-border);
+    }
+
+    body[data-theme="dark"] .settings-header {
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .settings-header i {
+      font-size: 24px;
+      color: var(--primary);
+    }
+
+    .settings-header h2 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .settings-group {
+      margin-bottom: 25px;
+    }
+
+    .settings-group h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .settings-group h3 {
+      color: var(--dark-text);
+    }
+
+    .settings-group h3 i {
+      color: var(--primary);
+    }
+
+    .color-options {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .color-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .color-option.active {
+      border-color: white;
+      box-shadow: 0 0 0 2px var(--primary);
+      transform: scale(1.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .form-group label {
+      color: var(--dark-text);
+    }
+
+    .form-control {
+      padding: 12px 16px;
+      border: 1px solid var(--light-border);
+      border-radius: 8px;
+      font-size: 15px;
+      width: 100%;
+      background: var(--light-bg);
+      transition: all 0.2s ease;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .form-control {
+      border: 1px solid var(--dark-border);
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+      outline: none;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .toggle-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toggle-label {
+      font-weight: 500;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .toggle-label {
+      color: var(--dark-text);
+    }
+
+    /* Planner */
+    .planner-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .planner-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .planner-header h2 {
+      font-size: 22px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .planner-header h2 i {
+      color: var(--primary);
+    }
+
+    .planner-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .planner-btn {
+      padding: 10px 16px;
+      background: white;
+      border: 1px solid var(--light-border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--light-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    body[data-theme="dark"] .planner-btn {
+      background: var(--dark-secondary);
+      border: 1px solid var(--dark-border);
+      color: var(--dark-text);
+    }
+
+    .planner-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .planner-btn.primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .planner-btn.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .timetable {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    body[data-theme="dark"] .timetable {
+      background: var(--dark-secondary);
+    }
+
+    .timetable-header {
+      display: grid;
+      grid-template-columns: 80px repeat(7, 1fr);
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    .timetable-header-cell {
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .timetable-body {
+      display: grid;
+      grid-template-columns: 80px repeat(7, 1fr);
+      grid-auto-rows: 70px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .time-cell {
+      padding: 10px;
+      border-right: 1px solid var(--light-border);
+      border-bottom: 1px solid var(--light-border);
+      font-size: 12px;
+      font-weight: 500;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9f9f9;
+    }
+
+    body[data-theme="dark"] .time-cell {
+      border-right: 1px solid var(--dark-border);
+      border-bottom: 1px solid var(--dark-border);
+      color: #aaa;
+      background: var(--dark-hover);
+    }
+
+    .schedule-cell {
+      padding: 8px;
+      border-right: 1px solid var(--light-border);
+      border-bottom: 1px solid var(--light-border);
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    body[data-theme="dark"] .schedule-cell {
+      border-right: 1px solid var(--dark-border);
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .schedule-cell:hover {
+      background: var(--light-hover);
+    }
+
+    body[data-theme="dark"] .schedule-cell:hover {
+      background: var(--dark-hover);
+    }
+
+    .task {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      background: rgba(99, 102, 241, 0.1);
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      padding: 6px;
+      font-size: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .task:hover {
+      transform: scale(1.02);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .task.math {
+      background: rgba(236, 72, 153, 0.1);
+      border-left-color: var(--secondary);
+    }
+
+    .task.physics {
+      background: rgba(16, 185, 129, 0.1);
+      border-left-color: var(--success);
+    }
+
+    .task.english {
+      background: rgba(245, 158, 11, 0.1);
+      border-left-color: var(--warning);
+    }
+
+    .task-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .task-title {
+      color: var(--dark-text);
+    }
+
+    .task-time {
+      font-size: 10px;
+      color: #666;
+    }
+
+    body[data-theme="dark"] .task-time {
+      color: #aaa;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: white;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    body[data-theme="dark"] .modal {
+      background: var(--dark-secondary);
+    }
+
+    .modal-overlay.show .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--light-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    body[data-theme="dark"] .modal-header {
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    body[data-theme="dark"] .modal-close {
+      color: #aaa;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid var(--light-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    body[data-theme="dark"] .modal-footer {
+      border-top: 1px solid var(--dark-border);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    body[data-theme="dark"] .btn-secondary {
+      background: var(--dark-hover);
+      border: 1px solid var(--dark-border);
+      color: var(--dark-text);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border: 1px solid var(--primary);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Score Calculator */
+    .score-calculator {
+      display: flex;
+      flex-direction: column;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .calculator-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .calculator-header i {
+      font-size: 24px;
+      color: var(--primary);
+    }
+
+    .calculator-header h2 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .exam-selector {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 20px;
+    }
+
+    body[data-theme="dark"] .exam-selector {
+      background: var(--dark-secondary);
+    }
+
+    .exam-type-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .exam-type-tab {
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: 1px solid var(--light-border);
+    }
+
+    body[data-theme="dark"] .exam-type-tab {
+      border: 1px solid var(--dark-border);
+    }
+
+    .exam-type-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .calculator-form {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+    }
+
+    body[data-theme="dark"] .calculator-form {
+      background: var(--dark-secondary);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-col {
+      flex: 1;
+    }
+
+    .results {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--light-border);
+    }
+
+    body[data-theme="dark"] .results {
+      border-top: 1px solid var(--dark-border);
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--light-border);
+    }
+
+    body[data-theme="dark"] .result-item {
+      border-bottom: 1px dashed var(--dark-border);
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+      font-weight: bold;
+    }
+
+    .result-label {
+      color: #666;
+    }
+
+    body[data-theme="dark"] .result-label {
+      color: #aaa;
+    }
+
+    .result-value {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: -280px;
+        height: 100vh;
+      }
+      
+      .sidebar.show {
+        left: 0;
+      }
+      
+      .mobile-toggle {
+        display: block !important;
+      }
+      
+      .form-row {
+        flex-direction: column;
+      }
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      margin-right: 15px;
+      cursor: pointer;
+      color: var(--light-text);
+    }
+
+    body[data-theme="dark"] .mobile-toggle {
+      color: var(--dark-text);
+    }
+
+    /* Notification System */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 300px;
+      z-index: 1000;
+    }
+
+    .notification {
+      background: white;
+      border-radius: 8px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 10px;
+      overflow: hidden;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    body[data-theme="dark"] .notification {
+      background: var(--dark-secondary);
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .notification-header {
+      padding: 12px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--light-border);
+    }
+
+    body[data-theme="dark"] .notification-header {
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .notification-title {
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notification-title i {
+      color: var(--primary);
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    body[data-theme="dark"] .notification-close {
+      color: #aaa;
+    }
+
+    .notification-body {
+      padding: 12px 15px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .notification-actions {
+      padding: 10px 15px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .notification-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .notification-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .notification-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    /* Progress Tracker */
+    .progress-tracker {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      margin-top: 20px;
+    }
+
+    body[data-theme="dark"] .progress-tracker {
+      background: var(--dark-secondary);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .progress-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .progress-date {
+      font-size: 14px;
+      color: #666;
+    }
+
+    body[data-theme="dark"] .progress-date {
+      color: #aaa;
+    }
+
+    .progress-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .progress-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .progress-subject {
+      font-weight: 500;
+    }
+
+    .progress-percentage {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    body[data-theme="dark"] .progress-bar {
+      background: var(--dark-hover);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-fill.math {
+      background: var(--secondary);
+    }
+
+    .progress-fill.physics {
+      background: var(--success);
+    }
+
+    .progress-fill.english {
+      background: var(--warning);
+    }
+
+    /* AI Tips */
+    .ai-tips {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      margin-top: 20px;
+      border-left: 4px solid var(--primary);
+    }
+
+    body[data-theme="dark"] .ai-tips {
+      background: var(--dark-secondary);
+    }
+
+    .ai-tips-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .ai-tips-header i {
+      color: var(--primary);
+      font-size: 20px;
+    }
+
+    .ai-tips-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .ai-tips-content {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .ai-tips-actions {
+      margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+      <h1><i class="fas fa-robot"></i> ebfl.ai</h1>
+      <div class="user-profile">
+        <div class="avatar">U</div>
+        <div class="user-info">
+          <div class="name">Kullanıcı</div>
+          <div class="role">Öğrenci</div>
+        </div>
+      </div>
+      <button class="menu-button active" onclick="showTab('chatbot')">
+        <i class="fas fa-comment-dots"></i> Yapay Zeka Chatbot
+      </button>
+      <button class="menu-button" onclick="showTab('planner')">
+        <i class="fas fa-calendar-alt"></i> AI Destekli Ders Programı
+      </button>
+      <button class="menu-button" onclick="showTab('timer')">
+        <i class="fas fa-stopwatch"></i> Sınav Sayacı
+      </button>
+      <button class="menu-button" onclick="showTab('score')">
+        <i class="fas fa-calculator"></i> Sınav Puan Hesaplama
+      </button>
+      <button class="menu-button" onclick="showTab('settings')">
+        <i class="fas fa-cog"></i> Ayarlar
+      </button>
+      
+      <div class="chat-history">
+        <h3>Bugün</h3>
+        <div class="chat-item">
+          <i class="fas fa-history"></i>
+          <span>Yapay Zeka Eğitim Platformu</span>
+        </div>
+      </div>
+      
+      <div class="theme-toggle">
+        <button onclick="toggleTheme()">
+          <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="chat-main">
+      <div class="header-bar">
+        <button class="mobile-toggle" id="mobile-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="title"><i class="fas fa-robot"></i> Yapay Zeka Asistanı</div>
+        <div class="auth-buttons">
+          <button>Giriş Yap</button>
+          <button>Kayıt Ol</button>
+        </div>
+      </div>
+      
+      <div id="chatbot" class="tab-content active">
+        <div class="chat-body">
+          <div class="message assistant">
+            Merhaba! Ben ebfl.ai yapay zeka asistanınızım. Size derslerinizde nasıl yardımcı olabilirim?
+            <div class="message-actions">
+              <button class="message-action"><i class="fas fa-thumbs-up"></i> Yararlı</button>
+              <button class="message-action"><i class="fas fa-reply"></i> Yanıtla</button>
+            </div>
+          </div>
+          
+          <div class="suggestions">
+            <div class="suggestion-chip" onclick="useSuggestion(this)">Matematik çalışmama yardım et</div>
+            <div class="suggestion-chip" onclick="useSuggestion(this)">TYT'ye nasıl hazırlanmalıyım?</div>
+            <div class="suggestion-chip" onclick="useSuggestion(this)">Fizik formüllerini öğret</div>
+          </div>
+        </div>
+        
+        <div class="chat-input">
+          <div class="chat-input-wrapper">
+            <input type="text" placeholder="Bir şeyler yaz..." onkeydown="if(event.key === 'Enter') sendMessage()">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+      
+      <div id="timer" class="tab-content">
+        <div class="exam-tabs">
+          <button class="active" onclick="selectExam('LGS')">LGS</button>
+          <button onclick="selectExam('TYT')">TYT</button>
+          <button onclick="selectExam('AYT')">AYT</button>
+        </div>
+        
+        <div id="countdown" class="countdown">
+          <div class="countdown-title">LGS sınavına kalan süre:</div>
+          <div>
+            <div class="time-unit">
+              <div class="time-value" id="days">00</div>
+              <div class="time-label">Gün</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="hours">00</div>
+              <div class="time-label">Saat</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="minutes">00</div>
+              <div class="time-label">Dakika</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="seconds">00</div>
+              <div class="time-label">Saniye</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="ai-tips">
+          <div class="ai-tips-header">
+            <i class="fas fa-lightbulb"></i>
+            <div class="ai-tips-title">AI Önerisi</div>
+          </div>
+          <div class="ai-tips-content">
+            LGS sınavına hazırlanırken son haftalarda konuları tekrar etmek yerine, deneme sınavları çözerek zaman yönetimi becerilerinizi geliştirmeye odaklanın. Her gün bir deneme sınavı çözmek, sınav performansınızı artıracaktır.
+          </div>
+          <div class="ai-tips-actions">
+            <button class="notification-btn notification-primary">Daha Fazla Öneri</button>
+          </div>
+        </div>
+      </div>
+      
+      <div id="planner" class="tab-content">
+        <div class="planner-container">
+          <div class="planner-header">
+            <h2><i class="fas fa-calendar-alt"></i> AI Destekli Ders Programı</h2>
+            <div class="planner-actions">
+              <button class="planner-btn" onclick="showPlannerSettings()">
+                <i class="fas fa-sliders-h"></i> Ayarlar
+              </button>
+              <button class="planner-btn primary" onclick="showAddTask()">
+                <i class="fas fa-plus"></i> Ders Ekle
+              </button>
+            </div>
+          </div>
+          
+          <div class="timetable">
+            <div class="timetable-header">
+              <div class="timetable-header-cell">Saat</div>
+              <div class="timetable-header-cell">Pazartesi</div>
+              <div class="timetable-header-cell">Salı</div>
+              <div class="timetable-header-cell">Çarşamba</div>
+              <div class="timetable-header-cell">Perşembe</div>
+              <div class="timetable-header-cell">Cuma</div>
+              <div class="timetable-header-cell">Cumartesi</div>
+              <div class="timetable-header-cell">Pazar</div>
+            </div>
+            <div class="timetable-body">
+              <!-- 8:00 - 22:00 arası saatler -->
+              <div class="time-cell">8:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="8"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="8"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="8"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="8"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="8"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="8"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="7" data-hour="8"></div>
+              
+              <div class="time-cell">9:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="9"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="9"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="9"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="9"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="9"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="9"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="7" data-hour="9"></div>
+              
+              <div class="time-cell">10:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="10">
+                <div class="task math" draggable="true" ondragstart="drag(event)" id="task1">
+                  <div class="task-title">Matematik</div>
+                  <div class="task-time">10:00 - 11:00</div>
+                </div>
+              </div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="10"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="10"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="10"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="10"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="10"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="7" data-hour="10"></div>
+              
+              <div class="time-cell">11:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="11"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="11">
+                <div class="task physics" draggable="true" ondragstart="drag(event)" id="task2">
+                  <div class="task-title">Fizik</div>
+                  <div class="task-time">11:00 - 12:00</div>
+                </div>
+              </div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="11"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="11"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="11"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="11"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="7" data-hour="11"></div>
+              
+              <div class="time-cell">12:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="12"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="12"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="12"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="12"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="12"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="12"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="7" data-hour="12"></div>
+              
+              <div class="time-cell">13:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="13"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="13"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="13"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="13"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="13"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="13"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="7" data-hour="13"></div>
+              
+              <div class="time-cell">14:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="14"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="14"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="14">
+                <div class="task english" draggable="true" ondragstart="drag(event)" id="task3">
+                  <div class="task-title">İngilizce</div>
+                  <div class="task-time">14:00 - 15:00</div>
+                </div>
+              </div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="14"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="14"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="14"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="7" data-hour="14"></div>
+              
+              <div class="time-cell">15:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="15"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="15"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="15"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="15"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="15"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="15"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="7" data-hour="15"></div>
+              
+              <div class="time-cell">16:00</div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="1" data-hour="16"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="2" data-hour="16"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="3" data-hour="16"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="4" data-hour="16"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="5" data-hour="16"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondragover="allowDrop(event)" data-day="6" data-hour="16"></div>
+              <div class="schedule-cell" ondrop="drop(event)" ondrag
