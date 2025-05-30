@@ -1,0 +1,1073 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ebfl.ai - Yapay Zeka Eğitim Asistanı</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body data-theme="light">
+  <div class="sidebar" id="sidebar">
+    <h1><i class="fas fa-robot"></i> ebfl.ai</h1>
+    <div class="user-profile">
+      <div class="avatar">U</div>
+      <div class="user-info">
+        <div class="name">Kullanıcı</div>
+        <div class="role">Öğrenci</div>
+      </div>
+    </div>
+    <button class="menu-button active" data-tab="chatbot">
+      <i class="fas fa-comment-dots"></i> Yapay Zeka Chatbot
+    </button>
+    <button class="menu-button" data-tab="planner">
+      <i class="fas fa-calendar-alt"></i> AI Destekli Ders Programı
+    </button>
+    <button class="menu-button" data-tab="timer">
+      <i class="fas fa-stopwatch"></i> Sınav Sayacı
+    </button>
+    <button class="menu-button" data-tab="score">
+      <i class="fas fa-calculator"></i> Sınav Puan Hesaplama
+    </button>
+    <button class="menu-button" data-tab="settings">
+      <i class="fas fa-cog"></i> Ayarlar
+    </button>
+    <button class="menu-button" data-tab="admin" id="admin-menu-button" style="display: none;">
+      <i class="fas fa-user-shield"></i> Admin Paneli
+    </button>
+    
+    <div class="chat-history">
+      <h3>Bugün</h3>
+      <div id="chat-history-items">
+        <!-- Sohbet geçmişi buraya dinamik olarak eklenecek -->
+        <div class="chat-item">
+          <i class="fas fa-history"></i>
+          <span>Yapay Zeka Eğitim Platformu</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="theme-toggle">
+      <button id="theme-toggle-btn">
+        <i class="fas fa-moon" id="theme-icon"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="chat-main">
+    <div class="header-bar">
+      <div class="mobile-toggle" id="mobile-toggle">
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="title"><i class="fas fa-robot"></i> Yapay Zeka Asistanı</div>
+      <div class="auth-buttons">
+        <button id="login-button">Giriş Yap</button>
+        <button id="register-button">Kayıt Ol</button>
+      </div>
+    </div>
+    
+    <!-- Chatbot Tab -->
+    <div id="chatbot" class="tab-content active">
+      <div class="chat-body" id="chat-body">
+        <div class="message assistant">
+          Merhaba! Ben ebfl.ai yapay zeka asistanınızım. Size derslerinizde nasıl yardımcı olabilirim?
+          <div class="message-actions">
+            <button class="message-action"><i class="fas fa-thumbs-up"></i> Yararlı</button>
+            <button class="message-action"><i class="fas fa-reply"></i> Yanıtla</button>
+          </div>
+        </div>
+        
+        <div class="suggestions">
+          <div class="suggestion-chip">Matematik çalışmama yardım et</div>
+          <div class="suggestion-chip">TYT'ye nasıl hazırlanmalıyım?</div>
+          <div class="suggestion-chip">Fizik formüllerini öğret</div>
+          <div class="suggestion-chip">Edebiyat konularını özetler misin?</div>
+          <div class="suggestion-chip">Biyoloji çalışma programı oluştur</div>
+        </div>
+      </div>
+      
+<div class="chat-input">
+  <div class="chat-input-wrapper">
+    <textarea id="chat-input-field" placeholder="Bir şeyler yaz..." rows="1"></textarea>
+    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+</div> <!-- /// burada #chatbot kapanıyor -->
+
+      
+    
+    <!-- Timer Tab -->
+    <div id="timer" class="tab-content">
+      <div class="exam-tabs">
+        <button class="active" data-exam="TYT">TYT</button>
+        <button data-exam="AYT">AYT</button>
+      </div>
+      
+      <div class="countdown">
+        <div class="countdown-title">TYT sınavına kalan süre:</div>
+        <div>
+          <div class="time-unit">
+            <div class="time-value" id="days">00</div>
+            <div class="time-label">Gün</div>
+          </div>
+          <div class="time-unit">
+            <div class="time-value" id="hours">00</div>
+            <div class="time-label">Saat</div>
+          </div>
+          <div class="time-unit">
+            <div class="time-value" id="minutes">00</div>
+            <div class="time-label">Dakika</div>
+          </div>
+          <div class="time-unit">
+            <div class="time-value" id="seconds">00</div>
+            <div class="time-label">Saniye</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="ai-tips">
+        <div class="ai-tips-header">
+          <i class="fas fa-lightbulb"></i>
+          <div class="ai-tips-title">AI Önerisi</div>
+        </div>
+        <div class="ai-tips-content" id="exam-tip">
+          TYT sınavında zaman yönetimi çok önemlidir. Her bölüm için sürenizi önceden planlayın.
+        </div>
+        <div class="ai-tips-actions">
+          <button class="notification-btn notification-primary" onclick="showNextTip()">Daha Fazla Öneri</button>
+        </div>
+      </div>
+
+      <div class="progress-tracker">
+        <div class="progress-header">
+          <div class="progress-title">Çalışma İstatistikleri</div>
+          <div class="progress-date">Son 30 gün</div>
+        </div>
+        <div class="progress-bars">
+          <div class="progress-item">
+            <div class="progress-label">
+              <span class="progress-subject">Matematik</span>
+              <span class="progress-percentage">65%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill math" style="width: 65%"></div>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label">
+              <span class="progress-subject">Fizik</span>
+              <span class="progress-percentage">45%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill physics" style="width: 45%"></div>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label">
+              <span class="progress-subject">Türkçe</span>
+              <span class="progress-percentage">80%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 80%"></div>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label">
+              <span class="progress-subject">İngilizce</span>
+              <span class="progress-percentage">70%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill english" style="width: 70%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Planner Tab -->
+    <div id="planner" class="tab-content">
+      <div class="planner-container">
+        <div class="planner-header">
+          <h2><i class="fas fa-calendar-alt"></i> AI Destekli Ders Programı</h2>
+          <div class="planner-actions">
+            <button class="planner-btn" onclick="showPlannerSettings()">
+              <i class="fas fa-sliders-h"></i> Ayarlar
+            </button>
+            <button class="planner-btn primary" onclick="showAddTaskModal()">
+              <i class="fas fa-plus"></i> Ders Ekle
+            </button>
+          </div>
+        </div>
+
+        <div class="planner-selector">
+          <select id="planner-select" class="form-control" onchange="loadSelectedPlanner()">
+            <option value="">Ders programı seçin veya yeni oluşturun</option>
+          </select>
+          <button onclick="showNewPlannerModal()">
+            <i class="fas fa-plus"></i> Yeni Program
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;">
+          <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); border: 1px solid var(--light-border);">
+            <h3 style="font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-clock" style="color: var(--primary);"></i>
+              Toplam Çalışma Süresi
+            </h3>
+            <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="total-study-hours">3 saat</div>
+            <p style="font-size: 14px; color: #666; margin-top: 4px;">Bu haftaki planlanan çalışma</p>
+          </div>
+
+          <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); border: 1px solid var(--light-border);">
+            <h3 style="font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-bell" style="color: var(--primary);"></i>
+              Yaklaşan Dersler
+            </h3>
+            <div style="font-size: 14px;" id="upcoming-classes">
+              <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--secondary);"></div>
+                <span>Matematik - Pazartesi 10:00</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success);"></div>
+                <span>Fizik - Salı 11:00</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); border: 1px solid var(--light-border);">
+            <h3 style="font-weight: 600; margin-bottom: 12px;">AI Önerisi</h3>
+            <p style="font-size: 14px; color: #666;">
+              Matematik ve Fizik derslerini sabah saatlerinde çalışmak daha verimli olabilir. Hafta sonları için daha uzun çalışma seansları planlayabilirsiniz.
+            </p>
+          </div>
+        </div>
+        
+        <div class="timetable">
+          <div class="timetable-header">
+            <div class="timetable-header-cell">Saat</div>
+            <div class="timetable-header-cell">Pazartesi</div>
+            <div class="timetable-header-cell">Salı</div>
+            <div class="timetable-header-cell">Çarşamba</div>
+            <div class="timetable-header-cell">Perşembe</div>
+            <div class="timetable-header-cell">Cuma</div>
+            <div class="timetable-header-cell">Cumartesi</div>
+            <div class="timetable-header-cell">Pazar</div>
+          </div>
+          <div class="timetable-body">
+            <!-- 8:00 - 16:00 arası saatler -->
+            <!-- 8:00 -->
+            <div class="time-cell">8:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="8"></div>
+            <div class="schedule-cell" data-day="2" data-hour="8"></div>
+            <div class="schedule-cell" data-day="3" data-hour="8"></div>
+            <div class="schedule-cell" data-day="4" data-hour="8"></div>
+            <div class="schedule-cell" data-day="5" data-hour="8"></div>
+            <div class="schedule-cell" data-day="6" data-hour="8"></div>
+            <div class="schedule-cell" data-day="7" data-hour="8"></div>
+            
+            <!-- 9:00 -->
+            <div class="time-cell">9:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="9"></div>
+            <div class="schedule-cell" data-day="2" data-hour="9"></div>
+            <div class="schedule-cell" data-day="3" data-hour="9"></div>
+            <div class="schedule-cell" data-day="4" data-hour="9"></div>
+            <div class="schedule-cell" data-day="5" data-hour="9"></div>
+            <div class="schedule-cell" data-day="6" data-hour="9"></div>
+            <div class="schedule-cell" data-day="7" data-hour="9"></div>
+            
+            <!-- 10:00 -->
+            <div class="time-cell">10:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="10">
+              <div class="task math" draggable="true" data-task-id="task1">
+                <div class="task-title">Matematik</div>
+                <div class="task-time">10:00 - 11:00</div>
+              </div>
+            </div>
+            <div class="schedule-cell" data-day="2" data-hour="10"></div>
+            <div class="schedule-cell" data-day="3" data-hour="10"></div>
+            <div class="schedule-cell" data-day="4" data-hour="10"></div>
+            <div class="schedule-cell" data-day="5" data-hour="10"></div>
+            <div class="schedule-cell" data-day="6" data-hour="10"></div>
+            <div class="schedule-cell" data-day="7" data-hour="10"></div>
+            
+            <!-- 11:00 -->
+            <div class="time-cell">11:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="11"></div>
+            <div class="schedule-cell" data-day="2" data-hour="11">
+              <div class="task physics" draggable="true" data-task-id="task2">
+                <div class="task-title">Fizik</div>
+                <div class="task-time">11:00 - 12:00</div>
+              </div>
+            </div>
+            <div class="schedule-cell" data-day="3" data-hour="11"></div>
+            <div class="schedule-cell" data-day="4" data-hour="11"></div>
+            <div class="schedule-cell" data-day="5" data-hour="11"></div>
+            <div class="schedule-cell" data-day="6" data-hour="11"></div>
+            <div class="schedule-cell" data-day="7" data-hour="11"></div>
+            
+            <!-- 12:00 -->
+            <div class="time-cell">12:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="12"></div>
+            <div class="schedule-cell" data-day="2" data-hour="12"></div>
+            <div class="schedule-cell" data-day="3" data-hour="12"></div>
+            <div class="schedule-cell" data-day="4" data-hour="12"></div>
+            <div class="schedule-cell" data-day="5" data-hour="12"></div>
+            <div class="schedule-cell" data-day="6" data-hour="12"></div>
+            <div class="schedule-cell" data-day="7" data-hour="12"></div>
+            
+            <!-- 13:00 -->
+            <div class="time-cell">13:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="13"></div>
+            <div class="schedule-cell" data-day="2" data-hour="13"></div>
+            <div class="schedule-cell" data-day="3" data-hour="13"></div>
+            <div class="schedule-cell" data-day="4" data-hour="13"></div>
+            <div class="schedule-cell" data-day="5" data-hour="13"></div>
+            <div class="schedule-cell" data-day="6" data-hour="13"></div>
+            <div class="schedule-cell" data-day="7" data-hour="13"></div>
+            
+            <!-- 14:00 -->
+            <div class="time-cell">14:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="14"></div>
+            <div class="schedule-cell" data-day="2" data-hour="14"></div>
+            <div class="schedule-cell" data-day="3" data-hour="14">
+              <div class="task english" draggable="true" data-task-id="task3">
+                <div class="task-title">İngilizce</div>
+                <div class="task-time">14:00 - 15:00</div>
+              </div>
+            </div>
+            <div class="schedule-cell" data-day="4" data-hour="14"></div>
+            <div class="schedule-cell" data-day="5" data-hour="14"></div>
+            <div class="schedule-cell" data-day="6" data-hour="14"></div>
+            <div class="schedule-cell" data-day="7" data-hour="14"></div>
+            
+            <!-- 15:00 -->
+            <div class="time-cell">15:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="15"></div>
+            <div class="schedule-cell" data-day="2" data-hour="15"></div>
+            <div class="schedule-cell" data-day="3" data-hour="15"></div>
+            <div class="schedule-cell" data-day="4" data-hour="15"></div>
+            <div class="schedule-cell" data-day="5" data-hour="15"></div>
+            <div class="schedule-cell" data-day="6" data-hour="15"></div>
+            <div class="schedule-cell" data-day="7" data-hour="15"></div>
+            
+            <!-- 16:00 -->
+            <div class="time-cell">16:00</div>
+            <div class="schedule-cell" data-day="1" data-hour="16"></div>
+            <div class="schedule-cell" data-day="2" data-hour="16"></div>
+            <div class="schedule-cell" data-day="3" data-hour="16"></div>
+            <div class="schedule-cell" data-day="4" data-hour="16"></div>
+            <div class="schedule-cell" data-day="5" data-hour="16"></div>
+            <div class="schedule-cell" data-day="6" data-hour="16"></div>
+            <div class="schedule-cell" data-day="7" data-hour="16"></div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+          <button class="planner-btn" onclick="exportToPDF()">
+            <i class="fas fa-file-pdf"></i> PDF Olarak İndir
+          </button>
+          <button class="planner-btn primary" onclick="saveCurrentPlanner()">
+            <i class="fas fa-save"></i> Programı Kaydet
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Score Tab -->
+    <div id="score" class="tab-content">
+      <div class="score-calculator">
+        <div class="calculator-header">
+          <i class="fas fa-calculator"></i>
+          <h2>Sınav Puan Hesaplama</h2>
+        </div>
+        
+        <div class="exam-selector">
+          <h3>Sınav Türü</h3>
+          <div class="exam-type-tabs">
+            <div class="exam-type-tab active" data-exam-type="tyt">TYT</div>
+            <div class="exam-type-tab" data-exam-type="ayt">AYT</div>
+          </div>
+          
+          <div id="tyt-form" class="calculator-form">
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label>Türkçe (40 Soru)</label>
+                  <div class="form-row">
+                    <div class="form-col">
+                      <div class="form-group">
+                        <label for="turkishCorrect">Doğru</label>
+                        <input type="number" id="turkishCorrect" class="form-control" min="0" max="40">
+                      </div>
+                    </div>
+                    <div class="form-col">
+                      <div class="form-group">
+                        <label for="turkishWrong">Yanlış</label>
+                        <input type="number" id="turkishWrong" class="form-control" min="0" max="40">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label>Temel Matematik (40 Soru)</label>
+                  <div class="form-row">
+                    <div class="form-col">
+                      <div class="form-group">
+                        <label for="mathCorrect">Doğru</label>
+                        <input type="number" id="mathCorrect" class="form-control" min="0" max="40">
+                      </div>
+                    </div>
+                    <div class="form-col">
+                      <div class="form-group">
+                        <label for="mathWrong">Yanlış</label>
+                        <input type="number" id="mathWrong" class="form-control" min="0" max="40">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label>Fen Bilimleri (20 Soru)</label>
+                  <div class="form-row">
+                    <div class="form-col">
+                      <div class="form-group">
+                        <label for="scienceCorrect">Doğru</label>
+                        <input type="number" id="scienceCorrect" class="form-control" min="0" max="20">
+                      </div>
+                    </div>
+                    <div class="form-col">
+                      <div class="form-group">
+                        <label for="scienceWrong">Yanlış</label>
+                        <input type="number" id="scienceWrong" class="form-control" min="0" max="20">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-col">
+                <div class="form-group">
+                  <label>Sosyal Bilimler (20 Soru)</label>
+                  <div class="form-row">
+                    <div class="form-col">
+                      <div class="form-group">
+                        <label for="socialCorrect">Doğru</label>
+                        <input type="number" id="socialCorrect" class="form-control" min="0" max="20">
+                      </div>
+                    </div>
+                    <div class="form-col">
+                      <div class="form-group">
+                        <label for="socialWrong">Yanlış</label>
+                        <input type="number" id="socialWrong" class="form-control" min="0" max="20">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="calculateScore()">Hesapla</button>
+            
+            <div id="results" class="results" style="display: none;">
+              <div class="result-item">
+                <span class="result-label">Türkçe Net</span>
+                <span class="result-value" id="turkishNet">0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Matematik Net</span>
+                <span class="result-value" id="mathNet">0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Fen Bilimleri Net</span>
+                <span class="result-value" id="scienceNet">0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Sosyal Bilimler Net</span>
+                <span class="result-value" id="socialNet">0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Toplam Net</span>
+                <span class="result-value" id="totalNet">0</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Tahmini Puan</span>
+                <span class="result-value" id="estimatedScore">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Settings Tab -->
+    <div id="settings" class="tab-content">
+      <div class="settings-container">
+        <div class="settings-header">
+          <i class="fas fa-cog"></i>
+          <h2>Ayarlar</h2>
+        </div>
+        
+        <div class="settings-group">
+          <h3><i class="fas fa-palette"></i> Görünüm Ayarları</h3>
+          
+          <div class="form-group">
+            <label>Tema Modu</label>
+            <div class="toggle-control">
+              <span class="toggle-label">Açık / Koyu Tema</span>
+              <label class="switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Renk Teması</label>
+            <div class="color-options">
+              <div class="color-option active" style="background-color: #6366f1;" data-color="purple"></div>
+              <div class="color-option" style="background-color: #3b82f6;" data-color="blue"></div>
+              <div class="color-option" style="background-color: #10b981;" data-color="green"></div>
+              <div class="color-option" style="background-color: #ec4899;" data-color="pink"></div>
+              <div class="color-option" style="background-color: #f59e0b;" data-color="orange"></div>
+              <div class="color-option" style="background-color: #ef4444;" data-color="red"></div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Animasyon Ayarları</label>
+            <div class="toggle-control">
+              <span class="toggle-label">Yumuşak geçişler ve animasyonlar</span>
+              <label class="switch">
+                <input type="checkbox" id="animations-toggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h3><i class="fas fa-brain"></i> AI Ayarları</h3>
+          
+          <div class="form-group">
+            <div class="toggle-control">
+              <span class="toggle-label">AI Kişiselleştir</span>
+              <label class="switch">
+                <input type="checkbox" id="customize-ai-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div id="ai-personalization-fields" style="display: none; margin-top: 15px; padding-left: 15px; border-left: 2px solid rgba(99, 102, 241, 0.2);">
+            <div class="form-group">
+              <label for="grade-select">Sınıf Seç</label>
+              <select id="grade-select" class="form-control">
+                <option value="9">9. Sınıf</option>
+                <option value="10">10. Sınıf</option>
+                <option value="11" selected>11. Sınıf</option>
+                <option value="12">12. Sınıf</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="subject-select">Ders Seç</label>
+              <select id="subject-select" class="form-control">
+                <option value="Türk Dili ve Edebiyatı">Türk Dili ve Edebiyatı</option>
+                <option value="Matematik" selected>Matematik</option>
+                <option value="Fizik">Fizik</option>
+                <option value="Kimya">Kimya</option>
+                <option value="Biyoloji">Biyoloji</option>
+                <option value="Tarih">Tarih</option>
+                <option value="Coğrafya">Coğrafya</option>
+                <option value="Din Kültürü ve Ahlak Bilgisi">Din Kültürü ve Ahlak Bilgisi</option>
+                <option value="Yabancı Dil">Yabancı Dil</option>
+                <option value="Rehberlik ve Psikoloji">Rehberlik ve Psikoloji</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-group">
+          <h3>Bildirim Ayarları</h3>
+          
+          <div class="form-group">
+            <div class="toggle-control">
+              <span class="toggle-label">Çalışma Hatırlatıcıları</span>
+              <label class="switch">
+                <input type="checkbox" id="study-reminders-toggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="toggle-control">
+              <span class="toggle-label">Sınav Geri Sayım Bildirimleri</span>
+              <label class="switch">
+                <input type="checkbox" id="exam-countdown-toggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="toggle-control">
+              <span class="toggle-label">AI Önerileri</span>
+              <label class="switch">
+                <input type="checkbox" id="ai-suggestions-toggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; text-align: right;">
+          <button class="btn btn-primary" onclick="saveSettings()">Ayarları Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Panel Tab -->
+    <div id="admin" class="tab-content">
+      <div class="admin-container">
+        <div class="admin-header">
+          <h2><i class="fas fa-user-shield"></i> Admin Paneli</h2>
+        </div>
+
+        <div class="admin-stats">
+          <div class="stat-card">
+            <div class="stat-title"><i class="fas fa-users"></i> Toplam Kullanıcı</div>
+            <div class="stat-value" id="total-users">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title"><i class="fas fa-user-clock"></i> Aktif Kullanıcı</div>
+            <div class="stat-value" id="active-users">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title"><i class="fas fa-comments"></i> Toplam Mesaj</div>
+            <div class="stat-value" id="total-messages">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title"><i class="fas fa-server"></i> Sunucu Durumu</div>
+            <div class="stat-value" id="server-status">Bağlanıyor...</div>
+          </div>
+        </div>
+
+        <div class="admin-tabs">
+          <div class="admin-tab active" data-admin-tab="users">Kullanıcılar</div>
+          <div class="admin-tab" data-admin-tab="chats">Sohbet Geçmişi</div>
+          <div class="admin-tab" data-admin-tab="prompts">Sistem Promptları</div>
+          <div class="admin-tab" data-admin-tab="logs">Sistem Logları</div>
+          <div class="admin-tab" data-admin-tab="settings">Sistem Ayarları</div>
+        </div>
+
+        <!-- Users Tab -->
+        <div class="admin-tab-content active" id="admin-users">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Ad Soyad</th>
+                <th>E-posta</th>
+                <th>Rol</th>
+                <th>Kayıt Tarihi</th>
+                <th>Son Giriş</th>
+                <th>İşlemler</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <!-- Kullanıcılar buraya dinamik olarak eklenecek -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Chats Tab -->
+        <div class="admin-tab-content" id="admin-chats">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Kullanıcı</th>
+                <th>Konu</th>
+                <th>Mesaj Sayısı</th>
+                <th>Tarih</th>
+                <th>İşlemler</th>
+              </tr>
+            </thead>
+            <tbody id="chats-table-body">
+              <!-- Sohbet geçmişi buraya dinamik olarak eklenecek -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Prompts Tab -->
+        <div class="admin-tab-content" id="admin-prompts">
+          <div class="admin-form">
+            <div class="admin-form-group">
+              <label for="prompt-select">Prompt Seçin</label>
+              <select id="prompt-select" class="admin-form-control" onchange="loadSelectedPrompt()">
+                <option value="default">Varsayılan Sistem Promptu</option>
+                <option value="math">Matematik Dersi Promptu</option>
+                <option value="physics">Fizik Dersi Promptu</option>
+                <option value="literature">Edebiyat Dersi Promptu</option>
+                <option value="biology">Biyoloji Dersi Promptu</option>
+                <option value="chemistry">Kimya Dersi Promptu</option>
+                <option value="history">Tarih Dersi Promptu</option>
+                <option value="geography">Coğrafya Dersi Promptu</option>
+              </select>
+            </div>
+            
+            <div class="admin-form-group">
+              <label for="prompt-content">Prompt İçeriği</label>
+              <textarea id="prompt-content" class="admin-form-control" rows="10">Sen bir eğitim asistanısın. Öğrencilere derslerinde yardımcı olmak, sorularını cevaplamak ve konuları anlaşılır bir şekilde açıklamak için varsın. Öğrencilerin seviyelerine uygun, açık ve anlaşılır bir dil kullanmalısın. Verdiğin bilgiler doğru ve güncel olmalı. Öğrencilerin sorularını sabırla yanıtlamalı ve onları düşünmeye teşvik etmelisin.</textarea>
+            </div>
+            
+            <div class="admin-form-actions">
+              <button class="btn btn-secondary" onclick="resetPrompt()">Sıfırla</button>
+              <button class="btn btn-primary" onclick="savePrompt()">Kaydet</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logs Tab -->
+        <div class="admin-tab-content" id="admin-logs">
+          <div style="background: var(--dark-bg); color: var(--dark-text); padding: 15px; border-radius: 8px; font-family: monospace; height: 400px; overflow-y: auto;" id="system-logs">
+            <!-- Sistem logları buraya dinamik olarak eklenecek -->
+          </div>
+          <div style="margin-top: 15px; text-align: right;">
+            <button class="btn btn-secondary" onclick="clearLogs()">Logları Temizle</button>
+            <button class="btn btn-primary" onclick="downloadLogs()">Logları İndir</button>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="admin-tab-content" id="admin-settings">
+          <div class="admin-form">
+            <div class="admin-form-group">
+              <label>API Ayarları</label>
+              <div class="admin-form-row">
+                <div class="admin-form-col">
+                  <div class="admin-form-group">
+                    <label for="api-provider">API Sağlayıcı</label>
+                    <select id="api-provider" class="admin-form-control">
+                      <option value="groq">Groq</option>
+                      <option value="openai">OpenAI</option>
+                      <option value="anthropic">Anthropic</option>
+                      <option value="mistral">Mistral AI</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="admin-form-col">
+                  <div class="admin-form-group">
+                    <label for="api-model">Model</label>
+                    <select id="api-model" class="admin-form-control">
+                      <option value="llama3-70b">Llama-3 70B</option>
+                      <option value="llama3-8b">Llama-3 8B</option>
+                      <option value="mixtral-8x7b">Mixtral 8x7B</option>
+                      <option value="gemma-7b">Gemma 7B</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="admin-form-group">
+                <label for="api-key">API Anahtarı</label>
+                <input type="password" id="api-key" class="admin-form-control" value="">
+              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label>Sistem Ayarları</label>
+              <div class="admin-form-row">
+                <div class="admin-form-col">
+                  <div class="admin-form-group">
+                    <label for="max-tokens">Maksimum Token</label>
+                    <input type="number" id="max-tokens" class="admin-form-control" value="4096">
+                  </div>
+                </div>
+                <div class="admin-form-col">
+                  <div class="admin-form-group">
+                    <label for="temperature">Sıcaklık</label>
+                    <input type="number" id="temperature" class="admin-form-control" value="0.7" step="0.1" min="0" max="1">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label>Sunucu Ayarları</label>
+              <div class="admin-form-row">
+                <div class="admin-form-col">
+                  <div class="admin-form-group">
+                    <label for="server-port">Port</label>
+                    <input type="number" id="server-port" class="admin-form-control" value="3000">
+                  </div>
+                </div>
+                <div class="admin-form-col">
+                  <div class="admin-form-group">
+                    <label for="server-timeout">Zaman Aşımı (ms)</label>
+                    <input type="number" id="server-timeout" class="admin-form-control" value="30000">
+                  </div>
+                </div>
+              </div>
+              <div class="admin-form-group">
+                <label for="server-status">Sunucu Durumu</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--success);" id="server-status-indicator"></div>
+                  <span id="server-status-text">Çalışıyor</span>
+                  <button class="btn btn-secondary" style="margin-left: auto;" onclick="restartServer()">Yeniden Başlat</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-form-actions">
+              <button class="btn btn-secondary" onclick="resetAdminSettings()">Varsayılana Sıfırla</button>
+              <button class="btn btn-primary" onclick="saveAdminSettings()">Ayarları Kaydet</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div class="modal-overlay" id="add-task-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Yeni Ders Ekle</h3>
+        <button class="modal-close" onclick="closeModal('add-task-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="task-title">Ders Başlığı</label>
+          <input type="text" id="task-title" class="form-control" placeholder="Örn: Matematik Problemleri">
+        </div>
+        
+        <div class="form-group">
+          <label for="task-subject">Ders</label>
+          <select id="task-subject" class="form-control">
+            <option value="">Ders seçin</option>
+            <option value="math">Matematik</option>
+            <option value="physics">Fizik</option>
+            <option value="chemistry">Kimya</option>
+            <option value="biology">Biyoloji</option>
+            <option value="english">İngilizce</option>
+            <option value="turkish">Türkçe</option>
+            <option value="history">Tarih</option>
+            <option value="geography">Coğrafya</option>
+          </select>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="task-day">Gün</label>
+              <select id="task-day" class="form-control">
+                <option value="1">Pazartesi</option>
+                <option value="2">Salı</option>
+                <option value="3">Çarşamba</option>
+                <option value="4">Perşembe</option>
+                <option value="5">Cuma</option>
+                <option value="6">Cumartesi</option>
+                <option value="7">Pazar</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-col">
+            <div class="form-group">
+              <label for="task-hour">Saat</label>
+              <select id="task-hour" class="form-control">
+                <option value="8">08:00</option>
+                <option value="9">09:00</option>
+                <option value="10">10:00</option>
+                <option value="11">11:00</option>
+                <option value="12">12:00</option>
+                <option value="13">13:00</option>
+                <option value="14">14:00</option>
+                <option value="15">15:00</option>
+                <option value="16">16:00</option>
+                <option value="17">17:00</option>
+                <option value="18">18:00</option>
+                <option value="19">19:00</option>
+                <option value="20">20:00</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="task-duration">Süre (saat)</label>
+          <select id="task-duration" class="form-control">
+            <option value="1">1 saat</option>
+            <option value="2">2 saat</option>
+            <option value="3">3 saat</option>
+            <option value="4">4 saat</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('add-task-modal')">İptal</button>
+        <button class="btn btn-primary" onclick="addTask()">Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Planner Modal -->
+  <div class="modal-overlay" id="new-planner-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Yeni Ders Programı</h3>
+        <button class="modal-close" onclick="closeModal('new-planner-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="planner-name">Program Adı</label>
+          <input type="text" id="planner-name" class="form-control" placeholder="Örn: Haftalık Ders Programı">
+        </div>
+        
+        <div class="form-group">
+          <label for="planner-description">Açıklama (İsteğe Bağlı)</label>
+          <textarea id="planner-description" class="form-control" placeholder="Program hakkında kısa bir açıklama"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('new-planner-modal')">İptal</button>
+        <button class="btn btn-primary" onclick="createNewPlanner()">Oluştur</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Giriş Yap</h3>
+        <button class="modal-close" onclick="closeModal('login-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="login-email">E-posta</label>
+          <input type="email" id="login-email" class="form-control" placeholder="E-posta adresiniz">
+        </div>
+        
+        <div class="form-group">
+          <label for="login-password">Şifre</label>
+          <div style="position: relative;">
+            <input type="password" id="login-password" class="form-control" placeholder="Şifreniz">
+            <button type="button" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;" onclick="togglePasswordVisibility('login-password')">
+              <i class="fas fa-eye" id="login-password-toggle"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+          <div>
+            <input type="checkbox" id="remember-me" style="margin-right: 5px;">
+            <label for="remember-me" style="font-size: 14px;">Beni hatırla</label>
+          </div>
+          <a href="#" onclick="showForgotPasswordModal()" style="font-size: 14px; color: var(--primary); text-decoration: none;">Şifremi unuttum</a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('login-modal')">İptal</button>
+        <button class="btn btn-primary" onclick="login()">Giriş Yap</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal-overlay" id="register-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Kayıt Ol</h3>
+        <button class="modal-close" onclick="closeModal('register-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="register-name">Ad</label>
+              <input type="text" id="register-name" class="form-control" placeholder="Adınız">
+            </div>
+          </div>
+          <div class="form-col">
+            <div class="form-group">
+              <label for="register-surname">Soyad</label>
+              <input type="text" id="register-surname" class="form-control" placeholder="Soyadınız">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-email">E-posta</label>
+          <input type="email" id="register-email" class="form-control" placeholder="E-posta adresiniz">
+        </div>
+        
+        <div class="form-group">
+          <label for="register-password">Şifre</label>
+          <div style="position: relative;">
+            <input type="password" id="register-password" class="form-control" placeholder="Şifreniz" onkeyup="checkPasswordStrength()">
+            <button type="button" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;" onclick="togglePasswordVisibility('register-password')">
+              <i class="fas fa-eye" id="register-password-toggle"></i>
+            </button>
+          </div>
+          <div id="password-strength" style="margin-top: 5px; font-size: 12px;">Şifre gücü: <span>Zayıf</span></div>
+          <div id="password-strength-bar" style="height: 5px; background: #e2e8f0; border-radius: 3px; margin-top: 5px; overflow: hidden;">
+            <div style="height: 100%; width: 0%; background: var(--danger); transition: all 0.3s ease;"></div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="register-password-confirm">Şifre Tekrar</label>
+          <input type="password" id="register-password-confirm" class="form-control" placeholder="Şifrenizi tekrar girin">
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <input type="checkbox" id="terms-checkbox" style="margin-right: 5px;">
+          <label for="terms-checkbox" style="font-size: 14px;">
+            <a href="terms.html" style="color: var(--primary); text-decoration: none;">Kullanım şartlarını</a> ve <a href="terms.html" style="color: var(--primary); text-decoration: none;">gizlilik politikasını</a> kabul ediyorum.
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('register-modal')">İptal</button>
+        <button class="btn btn-primary" onclick="register()">Kayıt Ol</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-overlay" id="forgot-password-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Şifremi Unuttum</h3>
+        <button class="modal-close" onclick="closeModal('forgot-password-modal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 15px;">Şifrenizi sıfırlamak için e-posta adresinizi girin.</p>
+        <div class="form-group">
+          <label for="forgot-email">E-posta</label>
+          <input type="email" id="forgot-email" class="form-control" placeholder="E-posta adresiniz">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('forgot-password-modal')">İptal</button>
+        <button class="btn btn-primary" onclick="resetPassword()">Şifremi Sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Container -->
+  <div class="notification-container" id="notification-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
